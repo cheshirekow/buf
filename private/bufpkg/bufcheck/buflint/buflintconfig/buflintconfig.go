@@ -59,6 +59,11 @@ type Config struct {
 	ServiceSuffix string
 	// AllowCommentIgnores turns on comment-driven ignores.
 	AllowCommentIgnores bool
+	// AllowTrailingComments allows field documentation in a trailing comment
+	AllowTrailingComments bool
+	// MaxTrailingCommentLen indicates the maximum length of a trailing comment
+	// allowed if AllowTrailingComments is true
+	MaxTrailingCommentLen int
 	// Version represents the version of the lint rule and category IDs that should be used with this config.
 	Version string
 }
@@ -145,6 +150,8 @@ type ExternalConfigV1Beta1 struct {
 	RPCAllowGoogleProtobufEmptyResponses bool                `json:"rpc_allow_google_protobuf_empty_responses,omitempty" yaml:"rpc_allow_google_protobuf_empty_responses,omitempty"`
 	ServiceSuffix                        string              `json:"service_suffix,omitempty" yaml:"service_suffix,omitempty"`
 	AllowCommentIgnores                  bool                `json:"allow_comment_ignores,omitempty" yaml:"allow_comment_ignores,omitempty"`
+	AllowTrailingComments 				 bool				 `json:"allow_trailing_comments,omitempty" yaml:"allow_trailing_comments,omitempty"`
+	MaxTrailingCommentLen 				 int                 `json:"max_trailing_comment_length,omitempty" yaml:"max_trailing_comment_length,omitempty"`
 }
 
 // ExternalConfigV1 is an external config.
@@ -161,6 +168,8 @@ type ExternalConfigV1 struct {
 	RPCAllowGoogleProtobufEmptyResponses bool                `json:"rpc_allow_google_protobuf_empty_responses,omitempty" yaml:"rpc_allow_google_protobuf_empty_responses,omitempty"`
 	ServiceSuffix                        string              `json:"service_suffix,omitempty" yaml:"service_suffix,omitempty"`
 	AllowCommentIgnores                  bool                `json:"allow_comment_ignores,omitempty" yaml:"allow_comment_ignores,omitempty"`
+	AllowTrailingComments 				 bool				 `json:"allow_trailing_comments,omitempty" yaml:"allow_trailing_comments,omitempty"`
+	MaxTrailingCommentLen 				 int                 `json:"max_trailing_comment_length,omitempty" yaml:"max_trailing_comment_length,omitempty"`
 }
 
 // ExternalConfigV1Beta1ForConfig takes a *Config and returns the v1beta1 externalconfig representation.
@@ -176,6 +185,8 @@ func ExternalConfigV1Beta1ForConfig(config *Config) ExternalConfigV1Beta1 {
 		RPCAllowGoogleProtobufEmptyResponses: config.RPCAllowGoogleProtobufEmptyResponses,
 		ServiceSuffix:                        config.ServiceSuffix,
 		AllowCommentIgnores:                  config.AllowCommentIgnores,
+		AllowTrailingComments: 				  config.AllowTrailingComments,
+		MaxTrailingCommentLen 				  config.MaxTrailingCommentLen,
 	}
 }
 
@@ -192,6 +203,8 @@ func ExternalConfigV1ForConfig(config *Config) ExternalConfigV1 {
 		RPCAllowGoogleProtobufEmptyResponses: config.RPCAllowGoogleProtobufEmptyResponses,
 		ServiceSuffix:                        config.ServiceSuffix,
 		AllowCommentIgnores:                  config.AllowCommentIgnores,
+		AllowTrailingComments: 				  config.AllowTrailingComments,
+		MaxTrailingCommentLen 				  config.MaxTrailingCommentLen,
 	}
 }
 
@@ -216,6 +229,8 @@ type configJSON struct {
 	RPCAllowGoogleProtobufEmptyResponses bool          `json:"rpc_allow_google_protobuf_empty_response,omitempty"`
 	ServiceSuffix                        string        `json:"service_suffix,omitempty"`
 	AllowCommentIgnores                  bool          `json:"allow_comment_ignores,omitempty"`
+	AllowTrailingComments 				 bool		   `json:"allow_trailing_comments,omitempty"`
+	MaxTrailingCommentLen 				 int           `json:"max_trailing_comment_length,omitempty"`
 	Version                              string        `json:"version,omitempty"`
 }
 
@@ -258,6 +273,8 @@ func configToJSON(config *Config) *configJSON {
 		RPCAllowGoogleProtobufEmptyResponses: config.RPCAllowGoogleProtobufEmptyResponses,
 		ServiceSuffix:                        config.ServiceSuffix,
 		AllowCommentIgnores:                  config.AllowCommentIgnores,
+		AllowTrailingComments: 				  config.AllowTrailingComments,
+		MaxTrailingCommentLen 				  config.MaxTrailingCommentLen,
 		Version:                              config.Version,
 	}
 }

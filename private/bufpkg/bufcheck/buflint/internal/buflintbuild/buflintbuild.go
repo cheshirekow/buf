@@ -17,6 +17,7 @@ package buflintbuild
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/bufbuild/buf/private/bufpkg/bufanalysis"
 	"github.com/bufbuild/buf/private/bufpkg/bufcheck/buflint/internal/buflintcheck"
@@ -32,11 +33,22 @@ var (
 		newAdapter(buflintcheck.CheckCommentEnum),
 	)
 	// CommentEnumValueRuleBuilder is a rule builder.
-	CommentEnumValueRuleBuilder = internal.NewNopRuleBuilder(
+	CommentEnumValueRuleBuilder = internal.NewRuleBuilder(
 		"COMMENT_ENUM_VALUE",
-		"enum values have non-empty comments",
-		newAdapter(buflintcheck.CheckCommentEnumValue),
+		func(configBuilder internal.ConfigBuilder) (string, error) {
+			if !configBuilder.AllowTrailingComments {
+				return "enum values have non-empty prefix comments", nil
+			}
+
+			return "enum values have non-empty prefix comments, or trailing comments with no more than" + strconv.Itoa(configBuilder.MaxTrailingCommentLen) + " characters", nil
+		},
+		func(configBuilder internal.ConfigBuilder) (internal.CheckFunc, error) {
+			return internal.CheckFunc(func(id string, ignoreFunc internal.IgnoreFunc, _ []protosource.File, files []protosource.File) ([]bufanalysis.FileAnnotation, error) {
+				return buflintcheck.CheckCommentEnumValue(id, ignoreFunc, files, configBuilder.AllowTrailingComments, configBuilder.MaxTrailingCommentLen)
+			}), nil
+		},
 	)
+
 	// CommentFieldRuleBuilder is a rule builder.
 	CommentFieldRuleBuilder = internal.NewNopRuleBuilder(
 		"COMMENT_FIELD",
