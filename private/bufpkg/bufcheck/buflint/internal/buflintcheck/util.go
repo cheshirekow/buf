@@ -54,6 +54,30 @@ func validLeadingComment(comment string) bool {
 	return false
 }
 
+// validTrailingComment returns true if comment has exactly one line that isn't
+// empty and isn't too long (>50 chars) and doesn't start with
+// CommentIgnorePrefix
+func validTrailingComment(comment string) bool {
+	comment = strings.TrimSpace(comment)
+	if strings.Contains(comment, "\n") {
+		return false
+	}
+
+	if strings.HasPrefix(comment, CommentIgnorePrefix) {
+		return false
+	}
+
+	if len(comment) > MaxTrailingCommentLen {
+		return false
+	}
+
+	if comment == "" {
+		return false
+	}
+
+	return true
+}
+
 // Returns the usedPackageList if there is an import cycle.
 //
 // Note this stops on the first import cycle detected, it doesn't attempt to get all of them - not perfect.

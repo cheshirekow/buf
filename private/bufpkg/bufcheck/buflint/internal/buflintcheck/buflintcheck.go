@@ -38,6 +38,11 @@ const (
 	// This is also used in buflint when constructing a new Runner, and is passed to the
 	// RunnerWithIgnorePrefix option.
 	CommentIgnorePrefix = "buf:lint:ignore"
+
+	// MaxTrailingCommentLen is the largest allowable trailing comment
+	//
+	// Trailing comments that exceed this length are not considered valid.
+	MaxTrailingCommentLen = 50
 )
 
 var (
@@ -95,7 +100,7 @@ func checkCommentNamedDescriptor(
 		// this will magically skip map entry fields as well as a side-effect, although originally unintended
 		return nil
 	}
-	if !validLeadingComment(location.LeadingComments()) {
+	if !(validLeadingComment(location.LeadingComments()) || validTrailingComment(location.TrailingComments())) {
 		add(namedDescriptor, location, nil, "%s %q should have a non-empty comment for documentation.", typeName, namedDescriptor.Name())
 	}
 	return nil
